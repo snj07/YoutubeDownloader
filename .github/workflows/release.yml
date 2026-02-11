@@ -36,7 +36,8 @@ jobs:
       - name: Configure Gradle toolchain (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: "ORG_GRADLE_JAVA_INSTALLATIONS_PATHS=$Env:JAVA_HOME" | Out-File -FilePath $Env:GITHUB_ENV -Append
+        run: |
+          "ORG_GRADLE_JAVA_INSTALLATIONS_PATHS=$Env:JAVA_HOME" | Out-File -FilePath $Env:GITHUB_ENV -Append
       - name: Diagnostics
         shell: bash
         run: |
