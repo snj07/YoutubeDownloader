@@ -73,6 +73,24 @@ where.exe ffmpeg
 
 ![App Screenshot](screenshots/image0.png)
 
+## Download Prebuilt Binaries
+
+Prebuilt binaries for the app are available on the [GitHub Releases page](https://github.com/snj07/YoutubeDownloader/releases). These include:
+
+- **macOS**: `.dmg` installer for easy installation.
+- **Windows**: `.msi` installer for a seamless setup experience.
+- **Linux**: `.deb` for linux
+
+### How to Use
+1. Download the appropriate file for your operating system.
+2. Follow the installation instructions for your platform:
+   - **macOS**: Open the `.dmg` file and drag the app to your Applications folder.
+   - **Windows**: Run the `.msi` file and follow the setup wizard.
+
+3. Launch the app and start downloading videos or playlists!
+
+For more details, visit the [Releases page](https://github.com/snj07/YoutubeDownloader/releases).
+
 ### Linux (Debian/Ubuntu) (NOT TESTED)
 
 ```bash
