@@ -6,27 +6,40 @@ Small Kotlin Multiplatform tool (Compose Desktop + CLI) to download YouTube vide
 
 ## Features
 - Desktop app (Compose Desktop) and CLI
-- Kotlin Multiplatform shared core (domain/data/engine/parser)
-- Supports `ktor` native engine and `yt-dlp` engine
-- MP3 extraction via `ffmpeg`
+- Shared Kotlin Multiplatform core (domain/data/engine/parser)
+- Downloads YouTube videos and playlists using a fast, native Kotlin (ktor) engine by default
+- Optionally supports `yt-dlp` as a fallback/secondary mode if the native engine fails due to YouTube changes
+- Audio extraction and media conversion require `ffmpeg` (mandatory for all modes)
 
 
-## Installation
+## Download
 
-Install the two common CLI tools used by the app: `yt-dlp` (optional) and `ffmpeg`. After installing, verify the binaries are available on your `PATH`.
+Prebuilt binaries are available on the [GitHub Releases page](https://github.com/snj07/YoutubeDownloader/releases).
 
-### macOS (Homebrew recommended)
+- macOS: `.dmg`
+- Windows: `.msi`
+- Linux: `.deb`
+
+### Install
+1. Download the appropriate file for your operating system.
+2. Install it:
+   - macOS: open the `.dmg` and drag the app to Applications.
+   - Windows: run the `.msi` and follow the setup wizard.
+   - Linux: install the `.deb` with your package manager.
+3. Launch the app and start downloading.
+
+## Optional tools
+
+The app works without `yt-dlp`. If you install it, you can enable the `yt-dlp` engine in Settings as a fallback if the default engine fails. 
+
+**Note:** `ffmpeg` is required for all downloads and features, regardless of the engine you use.
+
+### macOS (Homebrew)
 
 ```bash
-# Install via Homebrew
+# Install what you need
 brew update
 brew install yt-dlp ffmpeg
-
-# Verify
-which yt-dlp
-which ffmpeg
-yt-dlp --version
-ffmpeg -version
 ```
 
 **Note for macOS users:**
@@ -48,64 +61,29 @@ which yt-dlp
 
 ### Windows
 
-Use one of the common package managers. Example (Scoop):
+Use one of the common package managers.
 
 ```powershell
 # Scoop (user install)
-scoop install yt-dlp
-scoop install ffmpeg
-
-# Verify
-where.exe yt-dlp
-where.exe ffmpeg
-yt-dlp --version
-ffmpeg -version
+scoop install yt-dlp ffmpeg
 ```
 
 ```powershell
 # Chocolatey (admin)
-choco install yt-dlp
-choco install ffmpeg
-# Verify
-where.exe yt-dlp
-where.exe ffmpeg
+choco install yt-dlp ffmpeg
 ```
 
 ![App Screenshot](screenshots/image0.png)
 
-## Download Prebuilt Binaries
-
-Prebuilt binaries for the app are available on the [GitHub Releases page](https://github.com/snj07/YoutubeDownloader/releases). These include:
-
-- **macOS**: `.dmg` installer for easy installation.
-- **Windows**: `.msi` installer for a seamless setup experience.
-- **Linux**: `.deb` for linux
-
-### How to Use
-1. Download the appropriate file for your operating system.
-2. Follow the installation instructions for your platform:
-   - **macOS**: Open the `.dmg` file and drag the app to your Applications folder.
-   - **Windows**: Run the `.msi` file and follow the setup wizard.
-
-3. Launch the app and start downloading videos or playlists!
-
-For more details, visit the [Releases page](https://github.com/snj07/YoutubeDownloader/releases).
-
 ### Linux (Debian/Ubuntu) (NOT TESTED)
 
 ```bash
-# Install ffmpeg from apt
+# Install what you need
 sudo apt update
 sudo apt install -y ffmpeg
 
-# yt-dlp via pip (recommended) or your distro package
+# yt-dlp via pip (optional) or your distro package
 python3 -m pip install -U yt-dlp
-
-# Verify
-which yt-dlp
-which ffmpeg
-yt-dlp --version
-ffmpeg -version
 ```
 
 
@@ -115,9 +93,9 @@ ffmpeg -version
 - Install `yt-dlp` via `pip` or your distro's package if provided.
 
 
-## Bundled binaries
+## Binaries and paths
 
-You can use prebuilt `yt-dlp`/`ffmpeg` binaries. If you install manually, ensure the binary directory is on your `PATH` or paste the full path into the app Settings.
+You can use system `yt-dlp`/`ffmpeg` or point the app to custom binaries in Settings. If you do not install `yt-dlp`, the app will use the built-in engine.
 
 
 
@@ -186,8 +164,7 @@ Run the packaging tasks on the matching OS to generate native installers/binarie
 ## Outputs and defaults
 - Default download folder: `~/Downloads/YouTubeDownloader`
 
-## Binaries and paths
-- The app can use bundled `yt-dlp` and `ffmpeg` or fall back to system `PATH`.
+## CLI paths
 - Configure paths in the Settings dialog in the desktop app or pass CLI flags `--yt-dlp-path` / `--ffmpeg-path`.
 
 
