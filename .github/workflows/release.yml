@@ -6,16 +6,21 @@ on:
       - 'v*'   # Triggers on version tags like v1.0.0
   workflow_dispatch:
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 120
+    timeout-minutes: 240
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
+      fail-fast: false
     env:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g"
     steps:
@@ -36,36 +41,15 @@ jobs:
       - name: Build native package (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: |
-          ./gradlew :desktop-app:packageDmg --no-daemon --stacktrace --info --console=plain &
-          GRADLE_PID=$!
-          while kill -0 "$GRADLE_PID" 2>/dev/null; do
-            echo "build still running..."
-            sleep 60
-          done
-          wait "$GRADLE_PID"
+        run: ./gradlew :desktop-app:packageReleaseDmg --no-daemon --stacktrace --info --console=plain
       - name: Build native package (Linux)
         if: runner.os == 'Linux'
         shell: bash
-        run: |
-          ./gradlew :desktop-app:packageLinuxAppImage --no-daemon --stacktrace --info --console=plain &
-          GRADLE_PID=$!
-          while kill -0 "$GRADLE_PID" 2>/dev/null; do
-            echo "build still running..."
-            sleep 60
-          done
-          wait "$GRADLE_PID"
+        run: ./gradlew :desktop-app:packageReleaseDeb --no-daemon --stacktrace --info --console=plain
       - name: Build native package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: |
-          $proc = Start-Process -FilePath ".\gradlew.bat" -ArgumentList ":desktop-app:packageWindowsInstaller --no-daemon --stacktrace --info --console=plain" -PassThru
-          while (-not $proc.HasExited) {
-            Write-Host "build still running..."
-            Start-Sleep -Seconds 60
-            $proc.Refresh()
-          }
-          if ($proc.ExitCode -ne 0) { exit $proc.ExitCode }
+        run: .\gradlew.bat :desktop-app:packageReleaseMsi --no-daemon --stacktrace --info --console=plain
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -73,7 +57,7 @@ jobs:
           path: |
             desktop-app/build/compose/binaries/**/*.dmg
             desktop-app/build/compose/binaries/**/*.msi
-            desktop-app/build/compose/binaries/**/*.AppImage
+            desktop-app/build/compose/binaries/**/*.deb
 
   release:
     needs: build
