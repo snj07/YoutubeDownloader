@@ -59,7 +59,7 @@ fun main() = application {
         )
     }
     val container = remember(engineConfig) { AppContainer(appDir, engineConfig) }
-    val viewModel = remember(container) { DownloadsViewModel(container, appScope) }
+    val viewModel = remember(container, engineConfig) { DownloadsViewModel(container, appScope, engineConfig) }
 
     AppWindow(
         viewModel = viewModel,

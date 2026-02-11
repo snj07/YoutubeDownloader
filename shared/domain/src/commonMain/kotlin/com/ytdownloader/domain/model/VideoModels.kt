@@ -45,6 +45,8 @@ data class AudioStreamInfo(
 
 enum class QualityPreference {
     BEST,
+    UHD_2160,
+    QHD_1440,
     HD_1080,
     HD_720,
     SD_480,

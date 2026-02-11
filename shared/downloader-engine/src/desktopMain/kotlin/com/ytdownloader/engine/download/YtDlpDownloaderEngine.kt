@@ -125,6 +125,8 @@ class YtDlpDownloaderEngine(
     private fun buildCommand(request: DownloadRequest, outputTemplate: String): List<String> {
         val formatSelector = when (request.qualityPreference) {
             QualityPreference.BEST -> "bestvideo+bestaudio/best"
+            QualityPreference.UHD_2160 -> "bestvideo[height<=2160]+bestaudio/best[height<=2160]"
+            QualityPreference.QHD_1440 -> "bestvideo[height<=1440]+bestaudio/best[height<=1440]"
             QualityPreference.HD_1080 -> "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
             QualityPreference.HD_720 -> "bestvideo[height<=720]+bestaudio/best[height<=720]"
             QualityPreference.SD_480 -> "bestvideo[height<=480]+bestaudio/best[height<=480]"

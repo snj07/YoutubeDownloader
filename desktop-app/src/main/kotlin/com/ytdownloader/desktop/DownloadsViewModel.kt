@@ -2,6 +2,8 @@ package com.ytdownloader.desktop
 
 import com.ytdownloader.data.AppContainer
 import com.ytdownloader.domain.model.*
+import com.ytdownloader.engine.EngineConfig
+import com.ytdownloader.engine.EngineMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +17,8 @@ import kotlinx.coroutines.supervisorScope
 
 class DownloadsViewModel(
     private val container: AppContainer,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val engineConfig: EngineConfig
 ) {
     private val _url = MutableStateFlow("")
     val url: StateFlow<String> = _url.asStateFlow()
@@ -178,6 +181,18 @@ class DownloadsViewModel(
             _error.value = "Enter a video URL"
             return
         }
+        val toolError = validateRequiredTools()
+        if (toolError != null) {
+            _error.value = toolError
+            _singleVideo.value = SingleVideoUi(
+                id = DownloadIdFactory.create(),
+                title = videoUrl,
+                thumbnailUrl = null,
+                status = DownloadStatus.FAILED,
+                errorMessage = toolError
+            )
+            return
+        }
         _error.value = null
         val requestId = DownloadIdFactory.create()
         _singleVideo.value = SingleVideoUi(id = requestId, title = "Fetching...", thumbnailUrl = null)
@@ -237,6 +252,11 @@ class DownloadsViewModel(
             _error.value = "Select at least one video"
             return
         }
+        val toolError = validateRequiredTools()
+        if (toolError != null) {
+            _error.value = toolError
+            return
+        }
         _error.value = null
         launchPlaylistDownloads(selectedItems, outputDirectory)
     }
@@ -247,8 +267,42 @@ class DownloadsViewModel(
             _error.value = "Preview a playlist first"
             return
         }
+        val toolError = validateRequiredTools()
+        if (toolError != null) {
+            _error.value = toolError
+            return
+        }
         _error.value = null
         launchPlaylistDownloads(items, outputDirectory)
+    }
+
+    private fun validateRequiredTools(): String? {
+        if (!isFfmpegAvailable()) {
+            return "ffmpeg not found. Configure it in Settings or add it to PATH before downloading."
+        }
+        if (engineConfig.mode == EngineMode.YT_DLP && !isYtDlpAvailable()) {
+            return "yt-dlp not found. Configure it in Settings or add it to PATH before downloading."
+        }
+        return null
+    }
+
+    private fun isFfmpegAvailable(): Boolean {
+        val cmd = engineConfig.ffmpegPath?.trim().takeIf { !it.isNullOrEmpty() } ?: "ffmpeg"
+        return isCommandAvailable(cmd, listOf("-version"))
+    }
+
+    private fun isYtDlpAvailable(): Boolean {
+        val cmd = engineConfig.ytDlpPath?.trim().takeIf { !it.isNullOrEmpty() } ?: "yt-dlp"
+        return isCommandAvailable(cmd, listOf("--version"))
+    }
+
+    private fun isCommandAvailable(command: String, args: List<String>): Boolean {
+        return runCatching {
+            val process = ProcessBuilder(listOf(command) + args)
+                .redirectErrorStream(true)
+                .start()
+            process.waitFor() == 0
+        }.getOrDefault(false)
     }
 
     private fun launchPlaylistDownloads(items: List<PlaylistItemUi>, outputDirectory: String) {

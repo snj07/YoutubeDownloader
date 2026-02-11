@@ -50,7 +50,9 @@ class StreamSelector {
     private fun matchesPreference(stream: StreamInfo, preference: QualityPreference): Boolean {
         return when (preference) {
             QualityPreference.BEST -> true
-            QualityPreference.HD_1080 -> stream.height >= 1080
+            QualityPreference.UHD_2160 -> stream.height >= 2160
+            QualityPreference.QHD_1440 -> stream.height in 1440..2159
+            QualityPreference.HD_1080 -> stream.height in 1080..1439
             QualityPreference.HD_720 -> stream.height in 720..1079
             QualityPreference.SD_480 -> stream.height in 480..719
             QualityPreference.SD_360 -> stream.height in 360..479

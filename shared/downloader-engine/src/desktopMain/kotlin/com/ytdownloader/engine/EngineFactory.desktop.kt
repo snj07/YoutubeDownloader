@@ -12,13 +12,9 @@ actual object EngineFactory {
             EngineMode.KTOR -> buildKtor(config)
             EngineMode.YT_DLP -> {
                 val ytPath = config.ytDlpPath ?: findYtDlp()
-                if (ytPath != null && isYtDlpAvailable(ytPath)) {
-                    println("[Engine] Using yt-dlp at: $ytPath")
-                    YtDlpDownloaderEngine(ytPath, config.ffmpegPath)
-                } else {
-                    println("[Engine] yt-dlp not found, falling back to native Ktor engine")
-                    buildKtor(config)
-                }
+                val resolved = ytPath ?: "yt-dlp"
+                println("[Engine] Using yt-dlp at: $resolved")
+                YtDlpDownloaderEngine(resolved, config.ffmpegPath)
             }
         }
     }

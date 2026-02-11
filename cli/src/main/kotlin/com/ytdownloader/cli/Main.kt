@@ -168,7 +168,7 @@ private data class CliOptions(
             println(
                 """
                 |Usage:
-                |  cli --url <video-or-playlist-url> [--playlist] [--playlist-max <N>] [--format mp4|webm|mp3] [--quality best|hd_1080|hd_720|sd_480|sd_360] [--engine ktor|yt_dlp] [--yt-dlp-path <path>] [--ffmpeg-path <path>] [--output <dir>]
+                |  cli --url <video-or-playlist-url> [--playlist] [--playlist-max <N>] [--format mp4|webm|mp3] [--quality best|uhd_2160|qhd_1440|hd_1080|hd_720|sd_480|sd_360] [--engine ktor|yt_dlp] [--yt-dlp-path <path>] [--ffmpeg-path <path>] [--output <dir>]
                 |Examples:
                 |  cli --url https://www.youtube.com/watch?v=... --format mp3
                 |  cli --url https://www.youtube.com/playlist?list=... --playlist
