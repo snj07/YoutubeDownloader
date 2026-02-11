@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
     jvm("desktop")
     androidTarget()
     // iOS targets intentionally disabled for local build stability
