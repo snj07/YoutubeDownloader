@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -35,15 +36,36 @@ jobs:
       - name: Build native package (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: ./gradlew :desktop-app:packageDmg --no-daemon --stacktrace --info
+        run: |
+          ./gradlew :desktop-app:packageDmg --no-daemon --stacktrace --info --console=plain &
+          GRADLE_PID=$!
+          while kill -0 "$GRADLE_PID" 2>/dev/null; do
+            echo "build still running..."
+            sleep 60
+          done
+          wait "$GRADLE_PID"
       - name: Build native package (Linux)
         if: runner.os == 'Linux'
         shell: bash
-        run: ./gradlew :desktop-app:packageLinuxAppImage --no-daemon --stacktrace --info
+        run: |
+          ./gradlew :desktop-app:packageLinuxAppImage --no-daemon --stacktrace --info --console=plain &
+          GRADLE_PID=$!
+          while kill -0 "$GRADLE_PID" 2>/dev/null; do
+            echo "build still running..."
+            sleep 60
+          done
+          wait "$GRADLE_PID"
       - name: Build native package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: .\gradlew.bat :desktop-app:packageWindowsInstaller --no-daemon --stacktrace --info
+        run: |
+          $proc = Start-Process -FilePath ".\gradlew.bat" -ArgumentList ":desktop-app:packageWindowsInstaller --no-daemon --stacktrace --info --console=plain" -PassThru
+          while (-not $proc.HasExited) {
+            Write-Host "build still running..."
+            Start-Sleep -Seconds 60
+            $proc.Refresh()
+          }
+          if ($proc.ExitCode -ne 0) { exit $proc.ExitCode }
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
