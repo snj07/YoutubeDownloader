@@ -41,15 +41,32 @@ jobs:
       - name: Build native package (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: ./gradlew :desktop-app:packageReleaseDmg --no-daemon --stacktrace --info --console=plain
+        run: |
+          set -euo pipefail
+          heartbeat() { while true; do echo "build still running..."; sleep 30; done; }
+          heartbeat & HEARTBEAT_PID=$!
+          trap 'kill $HEARTBEAT_PID' EXIT
+          ./gradlew :desktop-app:packageReleaseDmg --no-daemon --stacktrace --info --console=plain
       - name: Build native package (Linux)
         if: runner.os == 'Linux'
         shell: bash
-        run: ./gradlew :desktop-app:packageReleaseDeb --no-daemon --stacktrace --info --console=plain
+        run: |
+          set -euo pipefail
+          heartbeat() { while true; do echo "build still running..."; sleep 30; done; }
+          heartbeat & HEARTBEAT_PID=$!
+          trap 'kill $HEARTBEAT_PID' EXIT
+          ./gradlew :desktop-app:packageReleaseDeb --no-daemon --stacktrace --info --console=plain
       - name: Build native package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: .\gradlew.bat :desktop-app:packageReleaseMsi --no-daemon --stacktrace --info --console=plain
+        run: |
+          $heartbeat = Start-Job -ScriptBlock { while ($true) { Write-Host "build still running..."; Start-Sleep -Seconds 30 } }
+          try {
+            .\gradlew.bat :desktop-app:packageReleaseMsi --no-daemon --stacktrace --info --console=plain
+          } finally {
+            Stop-Job $heartbeat | Out-Null
+            Remove-Job $heartbeat | Out-Null
+          }
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
