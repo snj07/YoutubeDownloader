@@ -6,29 +6,44 @@ on:
       - 'v*'   # Triggers on version tags like v1.0.0
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build native package
+      - name: Diagnostics
+        shell: bash
         run: |
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            ./gradlew :desktop-app:packageDmg
-          elif [[ "$RUNNER_OS" == "Windows" ]]; then
-            ./gradlew :desktop-app:packageWindowsInstaller
-          else
-            ./gradlew :desktop-app:packageLinuxAppImage
-          fi
+          echo "Runner OS: $RUNNER_OS"
+          java -version
+          ls -la
+      - name: Grant execute permission for gradlew
+        if: runner.os != 'Windows'
+        run: chmod +x gradlew
+      - name: Build native package (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: ./gradlew :desktop-app:packageDmg --no-daemon --stacktrace --info
+      - name: Build native package (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: ./gradlew :desktop-app:packageLinuxAppImage --no-daemon --stacktrace --info
+      - name: Build native package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\gradlew.bat :desktop-app:packageWindowsInstaller --no-daemon --stacktrace --info
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
