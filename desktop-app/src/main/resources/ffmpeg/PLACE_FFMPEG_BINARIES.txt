@@ -1,0 +1,5 @@
+Place bundled ffmpeg binaries here.
+Expected filenames:
+- ffmpeg-macos
+- ffmpeg-windows.exe
+- ffmpeg-linux

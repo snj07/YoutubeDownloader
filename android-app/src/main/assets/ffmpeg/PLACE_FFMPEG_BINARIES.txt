@@ -1,0 +1,5 @@
+Place bundled ffmpeg binaries here.
+Expected filenames:
+- ffmpeg-arm64-v8a
+- ffmpeg-armeabi-v7a
+- ffmpeg-x86_64

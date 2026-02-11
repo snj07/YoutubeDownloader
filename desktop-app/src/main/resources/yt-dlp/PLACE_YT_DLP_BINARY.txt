@@ -1,0 +1,5 @@
+Place bundled yt-dlp binaries here.
+Expected filenames:
+- yt-dlp-macos
+- yt-dlp-windows.exe
+- yt-dlp-linux
