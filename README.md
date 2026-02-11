@@ -13,7 +13,7 @@ Small Kotlin Multiplatform tool (Compose Desktop + CLI) to download YouTube vide
 
 ## Installation
 
-Install the two common CLI tools used by the app: `yt-dlp` and `ffmpeg`. After installing, verify the binaries are available on your `PATH`.
+Install the two common CLI tools used by the app: `yt-dlp` (optional) and `ffmpeg`. After installing, verify the binaries are available on your `PATH`.
 
 ### macOS (Homebrew recommended)
 
@@ -71,6 +71,7 @@ where.exe yt-dlp
 where.exe ffmpeg
 ```
 
+![App Screenshot](screenshots/image0.png)
 
 ### Linux (Debian/Ubuntu) (NOT TESTED)
 
@@ -101,7 +102,7 @@ ffmpeg -version
 You can use prebuilt `yt-dlp`/`ffmpeg` binaries. If you install manually, ensure the binary directory is on your `PATH` or paste the full path into the app Settings.
 
 
-![App Screenshot](screenshots/image0.png)
+
 
 
 ## Quickstart
