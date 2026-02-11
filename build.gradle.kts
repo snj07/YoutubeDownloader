@@ -12,7 +12,7 @@ plugins {
 
 allprojects {
     group = "com.ytdownloader"
-    version = "1.0.0"
+    version = "1.0.8"
 }
 
 val desktopProject = project(":desktop-app")
