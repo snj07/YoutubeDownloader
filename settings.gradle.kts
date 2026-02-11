@@ -15,6 +15,14 @@ dependencyResolutionManagement {
     }
 }
 
+toolchainManagement {
+    jvm {
+        javaRepositories {
+            repository("temurin")
+        }
+    }
+}
+
 rootProject.name = "youtube-downloader"
 
 include(":shared:domain")
